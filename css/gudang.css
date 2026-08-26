@@ -1,0 +1,52 @@
+/* ==========================================================================
+   gudang.css — Halaman Gudang (gudang.html)
+   Sebagian besar layout memakai komponen dari kasir.css (sidebar, topbar,
+   table, toolbar, stat-grid) agar konsisten antar dashboard admin.
+   ========================================================================== */
+
+.stock-level-bar { width: 100%; height: 6px; border-radius: 999px; background: var(--surface-2); overflow: hidden; margin-top: 4px; }
+.stock-level-bar span { display: block; height: 100%; border-radius: 999px; }
+.stock-level-bar.ok span { background: var(--success); }
+.stock-level-bar.low span { background: var(--warning); }
+.stock-level-bar.out span { background: var(--danger); }
+
+.tab-strip { display: flex; gap: 6px; overflow-x: auto; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+.tab-strip button {
+  background: none; border: none; padding: 11px 16px; font-size: 13.5px; font-weight: 700; color: var(--text-muted);
+  border-bottom: 2.5px solid transparent; white-space: nowrap;
+}
+.tab-strip button.active { color: var(--primary); border-color: var(--primary); }
+
+.movement-type-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+.movement-type-badge.masuk { background: #E0F5E9; color: #1E9E5A; }
+.movement-type-badge.keluar { background: #FBE1DF; color: #C13B31; }
+[data-theme="dark"] .movement-type-badge.masuk { background: #133627; color: #4EDB9C; }
+[data-theme="dark"] .movement-type-badge.keluar { background: #3A1512; color: #FF8479; }
+
+.transfer-arrow { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.transfer-arrow .arrow { color: var(--text-faint); }
+
+.opname-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+.opname-row { display: grid; grid-template-columns: 1fr 90px 90px; gap: 10px; align-items: center; padding: 10px; border: 1px solid var(--border); border-radius: 10px; }
+.opname-row input { width: 100%; padding: 8px 10px; border-radius: 8px; border: 1.5px solid var(--border); background: var(--bg-alt); color: var(--text); font-size: 13px; text-align: center; }
+
+.supplier-card { padding: 16px; }
+.supplier-card h4 { margin: 0 0 4px; font-size: 14.5px; }
+.supplier-card p { margin: 2px 0; font-size: 12.5px; color: var(--text-muted); }
+
+.po-line { display: grid; grid-template-columns: 1fr 70px 100px auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+
+/* ---- Upload foto produk (admin gudang) ---- */
+.product-photo-upload { display: flex; gap: 14px; align-items: flex-start; }
+.photo-preview {
+  width: 84px; height: 84px; border-radius: 12px; border: 1.5px dashed var(--border); flex-shrink: 0;
+  background: var(--surface-2); display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.photo-preview img { width: 100%; height: 100%; object-fit: contain; padding: 6px; box-sizing: border-box; display: none; }
+.photo-preview.has-image img { display: block; }
+.photo-preview:not(.has-image)::after { content: '📷'; font-size: 22px; opacity: .4; }
+.checkbox-row { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--text-muted); cursor: pointer; }
+.checkbox-row input { width: 16px; height: 16px; accent-color: var(--primary); }
+
+/* ---- Thumbnail produk di tabel admin ---- */
+.table-thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: var(--surface-2); padding: 3px; box-sizing: border-box; }
