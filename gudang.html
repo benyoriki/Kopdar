@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dashboard Gudang — KOPDAR</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="./assets/images/kopdar-favicon-64.png">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/kasir.css">
+<link rel="stylesheet" href="./css/gudang.css">
+</head>
+<body data-theme="light">
+<!-- ============================ APP LOADER (splash screen) ============================ -->
+<div class="app-loader" id="app-loader" role="status" aria-live="polite" aria-label="Memuat KOPDAR">
+  <div class="app-loader-noise"></div>
+  <div class="app-loader-content">
+    <div class="loader-logo-wrap">
+      <span class="loader-ring ring-1"></span>
+      <span class="loader-ring ring-2"></span>
+      <img src="./assets/images/kopdar-app-icon-dark.png" alt="KOPDAR" class="loader-logo">
+    </div>
+    <div class="loader-brand">
+      <span class="loader-brand-name">KOPDAR</span>
+      <span class="loader-brand-tagline">Koperasi Darat</span>
+    </div>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+  </div>
+  <div class="loader-credit">Website Developer <b>benyoriki.com</b></div>
+</div>
+
+
+
+<div class="admin-shell" id="admin-shell">
+  <div class="sidebar-overlay"></div>
+
+  <!-- ============================ SIDEBAR ============================ -->
+  <aside class="admin-sidebar">
+    <div class="brand-block">
+      <div class="brand-mark">
+        <img class="light-img" src="./assets/images/kopdar-app-icon.png" alt="KOPDAR">
+        <img class="dark-img" src="./assets/images/kopdar-app-icon-dark.png" alt="KOPDAR">
+      </div>
+      <div>
+        <div class="name">KOPDAR</div>
+        <div class="role" id="sidebar-role-label">Admin Gudang</div>
+      </div>
+    </div>
+    <nav class="admin-nav" id="sidebar-nav">
+      <button class="nav-link active" data-view="dashboard"><span class="icon" data-icon="chart"></span>Dashboard</button>
+      <button class="nav-link" data-view="produk"><span class="icon" data-icon="tag"></span>Produk</button>
+      <button class="nav-link" data-view="stok"><span class="icon" data-icon="package"></span>Stok</button>
+      <button class="nav-link" data-view="masuk"><span class="icon" data-icon="download"></span>Barang Masuk</button>
+      <button class="nav-link" data-view="keluar"><span class="icon" data-icon="upload"></span>Barang Keluar</button>
+      <button class="nav-link" data-view="transfer"><span class="icon" data-icon="transfer"></span>Transfer Cabang</button>
+      <button class="nav-link" data-view="opname"><span class="icon" data-icon="clipboard"></span>Stock Opname</button>
+      <button class="nav-link" data-view="supplier"><span class="icon" data-icon="truck"></span>Supplier</button>
+      <button class="nav-link" data-view="po"><span class="icon" data-icon="clipboard"></span>Purchase Order</button>
+      <button class="nav-link" data-view="laporan"><span class="icon" data-icon="trend-up"></span>Laporan Gudang</button>
+      <a href="./kasir.html" target="_blank"><span class="icon" data-icon="receipt"></span>Buka Kasir</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline btn-block btn-sm" id="btn-logout">Logout</button>
+    </div>
+  </aside>
+
+  <!-- ============================ MAIN ============================ -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="flex items-center gap-12">
+        <button class="hamburger"><span data-icon="menu" data-icon-size="18"></span></button>
+        <h1 id="topbar-title">Dashboard Gudang</h1>
+      </div>
+      <div class="flex items-center gap-8">
+        <button class="icon-btn notif-btn" id="btn-notif" title="Notifikasi">
+          <span data-icon="bell" data-icon-size="18"></span>
+          <span class="badge-count hidden" id="notif-badge">0</span>
+        </button>
+        <div class="theme-toggle">
+          <button data-theme-btn="light"><span data-icon="sun" data-icon-size="15"></span></button>
+          <button data-theme-btn="dark"><span data-icon="moon" data-icon-size="15"></span></button>
+          <span class="toggle-stars"><span style="top:6px;left:5px;"></span><span style="top:16px;left:11px;"></span><span style="top:9px;left:18px;"></span></span>
+        </div>
+        <a href="./index.html" class="btn btn-ghost btn-sm"><span data-icon="store" data-icon-size="15"></span> Toko</a>
+      </div>
+    </div>
+
+    <!-- Notification dropdown -->
+    <div class="notif-dropdown hidden" id="notif-dropdown">
+      <div class="notif-dropdown-head">Notifikasi</div>
+      <div id="notif-dropdown-list"></div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ================= DASHBOARD ================= -->
+      <section class="view-section" id="view-dashboard">
+        <div class="dashboard-greeting">
+          <div>
+            <h2 id="dashboard-greeting-text">Selamat Datang</h2>
+            <p id="dashboard-greeting-sub">Berikut ringkasan gudang Anda hari ini</p>
+          </div>
+          <span class="greeting-date" id="dashboard-greeting-date"></span>
+        </div>
+        <div class="stat-grid" id="gudang-stats"></div>
+        <div class="quick-actions" id="gudang-quick-actions"></div>
+        <div class="chart-grid">
+          <div class="card">
+            <div class="flex justify-between items-center mb-16"><b>⚠️ Produk Stok Kritis / Habis</b></div>
+            <div class="table-wrap responsive-cards" id="dashboard-low-stock"></div>
+          </div>
+          <div class="card">
+            <div class="flex justify-between items-center mb-16"><b>🕒 Pergerakan Stok Terbaru</b></div>
+            <div id="gudang-activity-feed"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= PRODUK ================= -->
+      <section class="view-section hidden" id="view-produk">
+        <div class="toolbar">
+          <div class="search-input"><span class="icon" data-icon="search" data-icon-size="14"></span><input type="text" id="produk-search" placeholder="Cari nama, SKU, barcode, merek..."></div>
+          <select id="produk-filter-category"><option value="">Semua Kategori</option></select>
+          <button class="btn btn-outline btn-sm" id="btn-export-products">Export CSV</button>
+          <label class="btn btn-outline btn-sm" style="cursor:pointer;">Import CSV<input type="file" id="input-import-products" accept=".csv" class="hidden"></label>
+          <button class="btn btn-primary btn-sm" id="btn-add-product">+ Tambah Produk</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="produk-table-wrap"></div>
+      </section>
+
+      <!-- ================= STOK ================= -->
+      <section class="view-section hidden" id="view-stok">
+        <div class="toolbar">
+          <div class="search-input"><span class="icon" data-icon="search" data-icon-size="14"></span><input type="text" id="stok-search" placeholder="Cari produk..."></div>
+          <select id="stok-filter-status">
+            <option value="">Semua</option><option value="ok">Stok Aman</option><option value="low">Stok Kritis</option><option value="out">Stok Habis</option>
+          </select>
+        </div>
+        <div class="table-wrap responsive-cards" id="stok-table-wrap"></div>
+      </section>
+
+      <!-- ================= BARANG MASUK ================= -->
+      <section class="view-section hidden" id="view-masuk">
+        <div class="flex justify-between items-center mb-16">
+          <span class="text-muted text-sm">Riwayat barang masuk (pembelian dari supplier)</span>
+          <button class="btn btn-primary btn-sm" id="btn-add-masuk">+ Barang Masuk</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="masuk-table-wrap"></div>
+      </section>
+
+      <!-- ================= BARANG KELUAR ================= -->
+      <section class="view-section hidden" id="view-keluar">
+        <div class="flex justify-between items-center mb-16">
+          <span class="text-muted text-sm">Barang keluar selain penjualan (rusak, kadaluarsa, hilang, dll)</span>
+          <button class="btn btn-primary btn-sm" id="btn-add-keluar">+ Barang Keluar</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="keluar-table-wrap"></div>
+      </section>
+
+      <!-- ================= TRANSFER ================= -->
+      <section class="view-section hidden" id="view-transfer">
+        <div class="flex justify-between items-center mb-16">
+          <span class="text-muted text-sm">Transfer stok antar cabang</span>
+          <button class="btn btn-primary btn-sm" id="btn-add-transfer">+ Transfer Stok</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="transfer-table-wrap"></div>
+      </section>
+
+      <!-- ================= STOCK OPNAME ================= -->
+      <section class="view-section hidden" id="view-opname">
+        <div class="card mb-16">
+          <div class="form-group"><label>Pilih Cabang</label><select class="form-control" id="opname-branch"></select></div>
+          <div class="form-group"><label>Cari Produk</label><input class="form-control" id="opname-search" placeholder="Cari produk untuk disesuaikan..."></div>
+        </div>
+        <div class="opname-grid" id="opname-list"></div>
+      </section>
+
+      <!-- ================= SUPPLIER ================= -->
+      <section class="view-section hidden" id="view-supplier">
+        <div class="flex justify-between items-center mb-16">
+          <span class="text-muted text-sm">Data supplier / pemasok barang</span>
+          <button class="btn btn-primary btn-sm" id="btn-add-supplier">+ Tambah Supplier</button>
+        </div>
+        <div class="branch-grid" id="supplier-list"></div>
+      </section>
+
+      <!-- ================= PURCHASE ORDER ================= -->
+      <section class="view-section hidden" id="view-po">
+        <div class="toolbar">
+          <select id="po-filter-status">
+            <option value="">Semua Status</option>
+            <option value="draft">Draft</option>
+            <option value="dipesan">Dipesan</option>
+            <option value="diterima">Diterima</option>
+            <option value="dibatalkan">Dibatalkan</option>
+          </select>
+          <button class="btn btn-primary btn-sm" id="btn-add-po">+ Buat Purchase Order</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="po-table-wrap"></div>
+      </section>
+
+      <!-- ================= LAPORAN GUDANG ================= -->
+      <section class="view-section hidden" id="view-laporan">
+        <div class="stat-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:18px;" id="gudang-laporan-stats"></div>
+        <div class="card mb-16">
+          <b>Produk Terlaris</b>
+          <div class="table-wrap responsive-cards mt-8" id="laporan-terlaris"></div>
+        </div>
+        <div class="card">
+          <b>Produk Paling Sedikit Terjual</b>
+          <div class="table-wrap responsive-cards mt-8" id="laporan-paling-sedikit"></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================ MODAL: PRODUCT FORM ============================ -->
+<div class="modal-overlay" id="modal-product-form">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3 id="product-modal-title">Tambah Produk</h3><button class="modal-close" onclick="UI.closeModal('modal-product-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-product">
+      <input type="hidden" id="prod-id">
+
+      <div class="form-group">
+        <label>Foto Produk</label>
+        <div class="product-photo-upload">
+          <div class="photo-preview" id="prod-photo-preview"><img id="prod-photo-preview-img" alt=""></div>
+          <div style="flex:1;">
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;">Pilih Foto<input type="file" id="prod-image-input" accept="image/*" class="hidden"></label>
+            <button type="button" class="btn btn-ghost btn-sm" id="prod-image-clear">Hapus Foto</button>
+            <p class="form-hint">Jika tidak diisi, sistem otomatis memakai ilustrasi kemasan sesuai kategori. Foto disimpan di browser ini (localStorage) — untuk produksi gunakan object storage/CDN.</p>
+          </div>
+        </div>
+        <input type="hidden" id="prod-image-data">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group"><label>Nama Produk</label><input class="form-control" id="prod-name" required></div>
+        <div class="form-group"><label>Kategori</label><select class="form-control" id="prod-category"></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Subkategori</label><input class="form-control" id="prod-subcategory" placeholder="mis. Air Mineral, Mie Instan..."></div>
+        <div class="form-group"><label>Merek</label><input class="form-control" id="prod-brand"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>SKU</label><input class="form-control" id="prod-sku"></div>
+        <div class="form-group"><label>Barcode</label><input class="form-control" id="prod-barcode"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Satuan</label><input class="form-control" id="prod-unit" placeholder="pcs, kg, botol..."></div>
+        <div class="form-group"><label>Berat / Volume</label><input class="form-control" id="prod-weight" placeholder="mis. 600ml, 1kg"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Harga Beli (Rp)</label><input class="form-control" type="number" id="prod-purchasePrice" min="0"></div>
+        <div class="form-group"><label>Harga Jual (Rp)</label><input class="form-control" type="number" id="prod-sellingPrice" min="0" required></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Stok Awal</label><input class="form-control" type="number" id="prod-stock" min="0"></div>
+        <div class="form-group"><label>Stok Minimum</label><input class="form-control" type="number" id="prod-minimumStock" min="0"></div>
+      </div>
+
+      <div class="form-group">
+        <label>Promo</label>
+        <div class="form-row">
+          <div><label class="checkbox-row"><input type="checkbox" id="prod-promo"> Aktifkan promo</label></div>
+          <input class="form-control" type="number" id="prod-discountPrice" placeholder="Harga promo (Rp)" min="0">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Penanda Produk</label>
+        <div class="flex gap-12" style="flex-wrap:wrap;">
+          <label class="checkbox-row"><input type="checkbox" id="prod-isBestSeller"> Produk Terlaris</label>
+          <label class="checkbox-row"><input type="checkbox" id="prod-isNew"> Produk Baru</label>
+          <label class="checkbox-row"><input type="checkbox" id="prod-isFeatured"> Unggulan</label>
+        </div>
+      </div>
+
+      <div class="form-group"><label>Supplier</label><select class="form-control" id="prod-supplier"></select></div>
+      <div class="form-group"><label>Deskripsi</label><textarea class="form-control" id="prod-description" rows="2"></textarea></div>
+      <div class="form-group"><label>Status</label>
+        <select class="form-control" id="prod-status"><option value="aktif">Aktif</option><option value="nonaktif">Nonaktif</option></select>
+      </div>
+      <p class="form-hint">Sumber harga: referensi retail Indonesia (estimasi demo), bukan harga resmi jaringan minimarket tertentu.</p>
+      <button class="btn btn-primary btn-block" type="submit">Simpan Produk</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: BARANG MASUK ============================ -->
+<div class="modal-overlay" id="modal-masuk-form">
+  <div class="modal">
+    <div class="modal-head"><h3>Barang Masuk</h3><button class="modal-close" onclick="UI.closeModal('modal-masuk-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-masuk">
+      <div class="form-group"><label>Produk</label><select class="form-control" id="masuk-product"></select></div>
+      <div class="form-group"><label>Supplier</label><select class="form-control" id="masuk-supplier"></select></div>
+      <div class="form-group"><label>Cabang / Gudang</label><select class="form-control" id="masuk-branch"></select></div>
+      <div class="form-row">
+        <div class="form-group"><label>Quantity</label><input class="form-control" type="number" id="masuk-qty" min="1" required></div>
+        <div class="form-group"><label>Harga Beli (Rp)</label><input class="form-control" type="number" id="masuk-price" min="0"></div>
+      </div>
+      <div class="form-group"><label>Keterangan</label><input class="form-control" id="masuk-note"></div>
+      <button class="btn btn-primary btn-block" type="submit">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: BARANG KELUAR ============================ -->
+<div class="modal-overlay" id="modal-keluar-form">
+  <div class="modal">
+    <div class="modal-head"><h3>Barang Keluar</h3><button class="modal-close" onclick="UI.closeModal('modal-keluar-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-keluar">
+      <div class="form-group"><label>Produk</label><select class="form-control" id="keluar-product"></select></div>
+      <div class="form-group"><label>Cabang / Gudang</label><select class="form-control" id="keluar-branch"></select></div>
+      <div class="form-group"><label>Quantity</label><input class="form-control" type="number" id="keluar-qty" min="1" required></div>
+      <div class="form-group"><label>Alasan</label>
+        <select class="form-control" id="keluar-reason">
+          <option>Rusak</option><option>Kadaluarsa</option><option>Hilang</option><option>Pemakaian Internal</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Keterangan</label><input class="form-control" id="keluar-note"></div>
+      <button class="btn btn-primary btn-block" type="submit">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: TRANSFER ============================ -->
+<div class="modal-overlay" id="modal-transfer-form">
+  <div class="modal">
+    <div class="modal-head"><h3>Transfer Stok Antar Cabang</h3><button class="modal-close" onclick="UI.closeModal('modal-transfer-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-transfer">
+      <div class="form-group"><label>Produk</label><select class="form-control" id="transfer-product"></select></div>
+      <div class="form-row">
+        <div class="form-group"><label>Dari Cabang</label><select class="form-control" id="transfer-from"></select></div>
+        <div class="form-group"><label>Ke Cabang</label><select class="form-control" id="transfer-to"></select></div>
+      </div>
+      <div class="form-group"><label>Quantity</label><input class="form-control" type="number" id="transfer-qty" min="1" required></div>
+      <div class="form-group"><label>Keterangan</label><input class="form-control" id="transfer-note"></div>
+      <button class="btn btn-primary btn-block" type="submit">Simpan Transfer</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: SUPPLIER FORM ============================ -->
+<div class="modal-overlay" id="modal-supplier-form">
+  <div class="modal">
+    <div class="modal-head"><h3>Tambah Supplier</h3><button class="modal-close" onclick="UI.closeModal('modal-supplier-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-supplier">
+      <div class="form-group"><label>Nama Supplier</label><input class="form-control" id="supplier-name" required></div>
+      <div class="form-group"><label>Kontak</label><input class="form-control" id="supplier-contact"></div>
+      <div class="form-group"><label>Alamat</label><textarea class="form-control" id="supplier-address" rows="2"></textarea></div>
+      <button class="btn btn-primary btn-block" type="submit">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: PURCHASE ORDER FORM ============================ -->
+<div class="modal-overlay" id="modal-po-form">
+  <div class="modal modal-lg">
+    <div class="modal-head"><h3>Buat Purchase Order</h3><button class="modal-close" onclick="UI.closeModal('modal-po-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-po">
+      <div class="form-row">
+        <div class="form-group"><label>Supplier</label><select class="form-control" id="po-supplier"></select></div>
+        <div class="form-group"><label>Cabang Tujuan</label><select class="form-control" id="po-branch"></select></div>
+      </div>
+      <div class="form-group"><label>Tanggal Diharapkan Tiba</label><input class="form-control" type="date" id="po-expected-date"></div>
+      <div class="form-group">
+        <label>Item Pesanan</label>
+        <div id="po-items-list"></div>
+        <button type="button" class="btn btn-outline btn-sm mt-8" id="btn-add-po-line">+ Tambah Item</button>
+      </div>
+      <div class="form-group"><label>Catatan</label><textarea class="form-control" id="po-note" rows="2"></textarea></div>
+      <div class="cart-summary-row total"><span>Estimasi Total</span><span id="po-estimated-total">Rp 0</span></div>
+      <button class="btn btn-primary btn-block mt-16" type="submit">Simpan sebagai Draft</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: PO DETAIL ============================ -->
+<div class="modal-overlay" id="modal-po-detail">
+  <div class="modal modal-lg" id="modal-po-detail-body"></div>
+</div>
+
+<script src="./js/icons.js"></script>
+<script src="./js/database.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/product-image.js"></script>
+<script src="./js/products.js"></script>
+<script src="./js/cart.js"></script>
+<script src="./js/transaction.js"></script>
+<script src="./js/branches.js"></script>
+<script src="./js/reports.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/gudang.js"></script>
+</body>
+</html>

@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Dashboard Kasir — KOPDAR</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="./assets/images/kopdar-favicon-64.png">
+<link rel="stylesheet" href="./css/style.css">
+<link rel="stylesheet" href="./css/kasir.css">
+</head>
+<body data-theme="light">
+<!-- ============================ APP LOADER (splash screen) ============================ -->
+<div class="app-loader" id="app-loader" role="status" aria-live="polite" aria-label="Memuat KOPDAR">
+  <div class="app-loader-noise"></div>
+  <div class="app-loader-content">
+    <div class="loader-logo-wrap">
+      <span class="loader-ring ring-1"></span>
+      <span class="loader-ring ring-2"></span>
+      <img src="./assets/images/kopdar-app-icon-dark.png" alt="KOPDAR" class="loader-logo">
+    </div>
+    <div class="loader-brand">
+      <span class="loader-brand-name">KOPDAR</span>
+      <span class="loader-brand-tagline">Koperasi Darat</span>
+    </div>
+    <div class="loader-dots"><span></span><span></span><span></span></div>
+  </div>
+  <div class="loader-credit">Website Developer <b>benyoriki.com</b></div>
+</div>
+
+
+
+<div id="access-check"></div>
+
+<div class="admin-shell" id="admin-shell">
+  <div class="sidebar-overlay"></div>
+
+  <!-- ============================ SIDEBAR ============================ -->
+  <aside class="admin-sidebar">
+    <div class="brand-block">
+      <div class="brand-mark">
+        <img class="light-img" src="./assets/images/kopdar-app-icon.png" alt="KOPDAR">
+        <img class="dark-img" src="./assets/images/kopdar-app-icon-dark.png" alt="KOPDAR">
+      </div>
+      <div>
+        <div class="name">KOPDAR</div>
+        <div class="role" id="sidebar-role-label">Admin Kasir</div>
+      </div>
+    </div>
+    <nav class="admin-nav" id="sidebar-nav">
+      <button class="nav-link active" data-view="dashboard"><span class="icon" data-icon="chart"></span>Dashboard</button>
+      <button class="nav-link" data-view="pos"><span class="icon" data-icon="receipt"></span>Kasir</button>
+      <button class="nav-link" data-view="transaksi"><span class="icon" data-icon="clipboard"></span>Transaksi</button>
+      <button class="nav-link" data-view="pesanan"><span class="icon" data-icon="shopping-bag"></span>Pesanan Online</button>
+      <button class="nav-link" data-view="kas"><span class="icon" data-icon="wallet"></span>Kas</button>
+      <button class="nav-link" data-view="laporan"><span class="icon" data-icon="trend-up"></span>Laporan</button>
+      <div class="nav-section-label" id="superadmin-section-label">Superadmin</div>
+      <button class="nav-link" data-view="cabang"><span class="icon" data-icon="building"></span>Cabang</button>
+      <button class="nav-link" data-view="pengaturan"><span class="icon" data-icon="settings"></span>Pengaturan</button>
+      <a href="./gudang.html" target="_blank" id="link-to-gudang"><span class="icon" data-icon="warehouse"></span>Buka Gudang</a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline btn-block btn-sm" id="btn-logout">Logout</button>
+    </div>
+  </aside>
+
+  <!-- ============================ MAIN ============================ -->
+  <div class="admin-main">
+    <div class="admin-topbar">
+      <div class="flex items-center gap-12">
+        <button class="hamburger"><span data-icon="menu" data-icon-size="18"></span></button>
+        <h1 id="topbar-title">Dashboard</h1>
+      </div>
+      <div class="flex items-center gap-8">
+        <button class="icon-btn notif-btn" id="btn-notif" title="Notifikasi">
+          <span data-icon="bell" data-icon-size="18"></span>
+          <span class="badge-count hidden" id="notif-badge">0</span>
+        </button>
+        <div class="theme-toggle">
+          <button data-theme-btn="light"><span data-icon="sun" data-icon-size="15"></span></button>
+          <button data-theme-btn="dark"><span data-icon="moon" data-icon-size="15"></span></button>
+          <span class="toggle-stars"><span style="top:6px;left:5px;"></span><span style="top:16px;left:11px;"></span><span style="top:9px;left:18px;"></span></span>
+        </div>
+        <a href="./index.html" class="btn btn-ghost btn-sm"><span data-icon="store" data-icon-size="15"></span> Toko</a>
+      </div>
+    </div>
+
+    <!-- Notification dropdown -->
+    <div class="notif-dropdown hidden" id="notif-dropdown">
+      <div class="notif-dropdown-head">Notifikasi</div>
+      <div id="notif-dropdown-list"></div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ================= VIEW: DASHBOARD ================= -->
+      <section class="view-section" id="view-dashboard">
+        <div class="dashboard-greeting">
+          <div>
+            <h2 id="dashboard-greeting-text">Selamat Datang</h2>
+            <p id="dashboard-greeting-sub">Berikut ringkasan toko Anda hari ini</p>
+          </div>
+          <span class="greeting-date" id="dashboard-greeting-date"></span>
+        </div>
+        <div class="stat-grid" id="dashboard-stats"></div>
+
+        <div class="quick-actions" id="dashboard-quick-actions"></div>
+
+        <div class="chart-grid">
+          <div class="card chart-card">
+            <div class="head"><b>Penjualan 7 Hari Terakhir</b></div>
+            <canvas id="chart-weekly"></canvas>
+          </div>
+          <div class="card chart-card">
+            <div class="head"><b>Produk Terlaris</b></div>
+            <div id="dashboard-top-products"></div>
+          </div>
+        </div>
+
+        <div class="card mt-16">
+          <div class="head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <b>🕒 Aktivitas Terbaru</b>
+            <button class="btn btn-ghost btn-sm" data-view-jump="transaksi">Lihat Semua</button>
+          </div>
+          <div id="dashboard-activity-feed"></div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: POS / KASIR ================= -->
+      <section class="view-section hidden" id="view-pos">
+        <div class="pos-scan">
+          <div class="pos-search-wrap">
+            <span data-icon="barcode" data-icon-size="16"></span>
+            <input type="text" id="pos-search" placeholder="Cari produk atau scan barcode...">
+          </div>
+          <button class="btn btn-outline" id="pos-clear-cart"><span data-icon="trash" data-icon-size="15"></span> Clear Cart</button>
+        </div>
+        <div class="pos-category-row" id="pos-category-row"></div>
+        <div class="pos-layout">
+          <div>
+            <div class="pos-products" id="pos-products"></div>
+          </div>
+          <div class="pos-cart-panel">
+            <div class="head"><b>Keranjang</b><span class="text-sm text-muted" id="pos-branch-label"></span></div>
+            <div class="pos-cart-items" id="pos-cart-items"></div>
+            <div class="pos-summary">
+              <div class="form-group" style="margin-bottom:10px;">
+                <label>Diskon (Rp)</label>
+                <input type="number" class="form-control" id="pos-discount" value="0" min="0">
+              </div>
+              <div class="cart-summary-row"><span>Subtotal</span><span id="pos-subtotal">Rp 0</span></div>
+              <div class="cart-summary-row total"><span>Total</span><span id="pos-total">Rp 0</span></div>
+
+              <div class="form-group mt-16"><label>Metode Pembayaran</label></div>
+              <div class="pos-payment-methods" id="pos-payment-methods">
+                <button data-pay="Cash" class="active"><span data-icon="banknote" data-icon-size="18"></span>Cash</button>
+                <button data-pay="QRIS"><span data-icon="qr-code" data-icon-size="18"></span>QRIS</button>
+                <button data-pay="Transfer"><span data-icon="transfer" data-icon-size="18"></span>Transfer</button>
+                <button data-pay="Debit"><span data-icon="credit-card" data-icon-size="18"></span>Debit</button>
+                <button data-pay="Kredit"><span data-icon="credit-card" data-icon-size="18"></span>Kredit</button>
+              </div>
+
+              <div class="form-group" id="pos-cash-group">
+                <label>Uang Diterima</label>
+                <input type="number" class="form-control" id="pos-cash-received" min="0" value="0">
+                <div class="form-hint">Kembalian: <b id="pos-change">Rp 0</b></div>
+              </div>
+
+              <button class="btn btn-accent btn-block btn-lg mt-8" id="pos-checkout-btn">Bayar &amp; Simpan Transaksi</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: TRANSAKSI ================= -->
+      <section class="view-section hidden" id="view-transaksi">
+        <div class="toolbar">
+          <div class="search-input"><span class="icon" data-icon="search" data-icon-size="14"></span><input type="text" id="trx-search" placeholder="Cari nomor transaksi..."></div>
+          <select id="trx-filter-branch"></select>
+          <button class="btn btn-outline btn-sm" id="trx-export-csv">Export CSV</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="trx-table-wrap"></div>
+      </section>
+
+      <!-- ================= VIEW: PESANAN ONLINE ================= -->
+      <section class="view-section hidden" id="view-pesanan">
+        <div class="toolbar">
+          <div class="search-input"><span class="icon" data-icon="search" data-icon-size="14"></span><input type="text" id="order-search" placeholder="Cari nomor order / nama..."></div>
+          <select id="order-filter-status">
+            <option value="">Semua Status</option>
+            <option>Pesanan masuk</option><option>Diproses</option><option>Disiapkan</option><option>Dikirim</option><option>Siap diambil</option><option>Selesai</option><option>Dibatalkan</option>
+          </select>
+        </div>
+        <div class="table-wrap responsive-cards" id="order-table-wrap"></div>
+      </section>
+
+      <!-- ================= VIEW: KAS ================= -->
+      <section class="view-section hidden" id="view-kas">
+        <div class="stat-grid stat-grid-3" id="kas-stats"></div>
+        <div class="flex gap-8 mb-16">
+          <button class="btn btn-primary btn-sm" id="btn-kas-masuk">+ Uang Masuk</button>
+          <button class="btn btn-outline btn-sm" id="btn-kas-keluar">+ Uang Keluar</button>
+        </div>
+        <div class="table-wrap responsive-cards" id="kas-table-wrap"></div>
+      </section>
+
+      <!-- ================= VIEW: LAPORAN ================= -->
+      <section class="view-section hidden" id="view-laporan">
+        <div class="toolbar">
+          <select id="laporan-period"><option value="today">Hari Ini</option><option value="week">Minggu Ini</option><option value="month">Bulan Ini</option><option value="all">Semua</option></select>
+          <select id="laporan-branch"></select>
+        </div>
+        <div class="stat-grid stat-grid-3" id="laporan-stats"></div>
+        <div class="card mb-16">
+          <b>Omzet per Cabang</b>
+          <div class="table-wrap responsive-cards mt-8" id="laporan-branch-table"></div>
+        </div>
+        <div class="card">
+          <b>Produk Terlaris</b>
+          <div class="table-wrap responsive-cards mt-8" id="laporan-product-table"></div>
+        </div>
+      </section>
+
+      <!-- ================= VIEW: CABANG (superadmin) ================= -->
+      <section class="view-section hidden" id="view-cabang">
+        <div class="flex justify-between items-center mb-16">
+          <span class="text-muted text-sm">Kelola cabang toko Anda</span>
+          <button class="btn btn-primary btn-sm" id="btn-add-branch">+ Tambah Cabang</button>
+        </div>
+        <div class="branch-grid" id="branch-manage-list"></div>
+      </section>
+
+      <!-- ================= VIEW: PENGATURAN (superadmin) ================= -->
+      <section class="view-section hidden" id="view-pengaturan">
+        <div class="card" style="max-width:520px;">
+          <form id="form-settings">
+            <div class="form-group"><label>Nama Toko</label><input class="form-control" id="set-storeName"></div>
+            <div class="form-group"><label>Alamat</label><textarea class="form-control" id="set-address" rows="2"></textarea></div>
+            <div class="form-group"><label>Nomor WhatsApp Toko</label><input class="form-control" id="set-whatsapp"></div>
+            <div class="form-row">
+              <div class="form-group"><label>Jam Buka</label><input class="form-control" id="set-openHours"></div>
+              <div class="form-group"><label>Biaya Delivery (Rp)</label><input class="form-control" type="number" id="set-deliveryFee"></div>
+            </div>
+            <div class="form-row">
+              <div class="form-group"><label>Minimal Order (Rp)</label><input class="form-control" type="number" id="set-minOrder"></div>
+              <div class="form-group"><label>Pajak (%)</label><input class="form-control" type="number" id="set-tax"></div>
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Simpan Pengaturan</button>
+          </form>
+        </div>
+        <div class="card mt-16" style="max-width:520px;">
+          <b>Database</b>
+          <p class="text-sm text-muted mt-8">Export/import seluruh data sistem dalam format JSON.</p>
+          <div class="flex gap-8 mt-8">
+            <button class="btn btn-outline btn-sm" id="btn-export-db">Export JSON</button>
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;">Import JSON<input type="file" id="input-import-db" accept=".json" class="hidden"></label>
+          </div>
+          <button class="btn btn-danger btn-sm mt-8" id="btn-reset-db">Reset Demo Data</button>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============================ MODAL: CASH FORM ============================ -->
+<div class="modal-overlay" id="modal-kas-form">
+  <div class="modal">
+    <div class="modal-head"><h3 id="kas-modal-title">Uang Masuk</h3><button class="modal-close" onclick="UI.closeModal('modal-kas-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-kas">
+      <input type="hidden" id="kas-type" value="masuk">
+      <div class="form-group"><label>Kategori</label>
+        <select class="form-control" id="kas-category"></select>
+      </div>
+      <div class="form-group"><label>Keterangan</label><input class="form-control" id="kas-desc" required></div>
+      <div class="form-group"><label>Nominal (Rp)</label><input class="form-control" type="number" id="kas-amount" min="1" required></div>
+      <div class="form-group"><label>Cabang</label><select class="form-control" id="kas-branch"></select></div>
+      <button class="btn btn-primary btn-block" type="submit">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: STRUK ============================ -->
+<div class="modal-overlay" id="modal-receipt">
+  <div class="modal">
+    <div class="modal-head"><h3>Struk Transaksi</h3><button class="modal-close" onclick="UI.closeModal('modal-receipt')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <div id="receipt-container"></div>
+    <div class="flex gap-8 mt-16">
+      <button class="btn btn-outline btn-block" onclick="window.print()">🖨 Print Struk</button>
+      <button class="btn btn-primary btn-block" onclick="UI.closeModal('modal-receipt')">Selesai</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================ MODAL: BRANCH FORM ============================ -->
+<div class="modal-overlay" id="modal-branch-form">
+  <div class="modal">
+    <div class="modal-head"><h3 id="branch-modal-title">Tambah Cabang</h3><button class="modal-close" onclick="UI.closeModal('modal-branch-form')"><span data-icon="x" data-icon-size="16"></span></button></div>
+    <form id="form-branch">
+      <input type="hidden" id="branch-id">
+      <div class="form-group"><label>Nama Cabang</label><input class="form-control" id="branch-name" required></div>
+      <div class="form-group"><label>Alamat</label><textarea class="form-control" id="branch-address" rows="2"></textarea></div>
+      <div class="form-group"><label>Nomor WhatsApp</label><input class="form-control" id="branch-whatsapp"></div>
+      <div class="form-group"><label>Nama Kepala Cabang</label><input class="form-control" id="branch-head"></div>
+      <button class="btn btn-primary btn-block" type="submit">Simpan</button>
+    </form>
+  </div>
+</div>
+
+<!-- ============================ MODAL: DETAIL PESANAN ============================ -->
+<div class="modal-overlay" id="modal-order-detail">
+  <div class="modal modal-lg" id="modal-order-detail-body"></div>
+</div>
+
+<script src="./js/icons.js"></script>
+<script src="./js/database.js"></script>
+<script src="./js/auth.js"></script>
+<script src="./js/product-image.js"></script>
+<script src="./js/products.js"></script>
+<script src="./js/cart.js"></script>
+<script src="./js/transaction.js"></script>
+<script src="./js/branches.js"></script>
+<script src="./js/reports.js"></script>
+<script src="./js/ui.js"></script>
+<script src="./js/kasir.js"></script>
+</body>
+</html>
